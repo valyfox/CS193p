@@ -5,51 +5,54 @@
 //  Created by Valerio Volpe on 24/06/21.
 //
 
-// LECTURE 1
+// LECTURE 2
 
 import SwiftUI
 
-// functional programming
-struct ContentView: View { //View: the struct behaves like a view
-//    I get all the functionality of a view, but also all the responsibility
+// more smaller views is better than less bigger views
+
+struct ContentView: View {
+    var emojis = ["✈️", "🚁", "🚂", "🛳"]
+    
     var body: some View {
-        //a view must implement this variabile
-        //        some View is the type of the variabile
-        //        body is some other view
-        //        a chair made of lego is itself a lego
-        //        body is a combiner view
-        //        body is a function that does not a name and no input parameters, it returns a Text (the return keyword is hidden
-        //        body is calculated every time by executinf the function
-                
-        //        /*(*/return/*)*/ Text("Hellooooo, wooooorld!")
-        //            .foregroundColor(Color.blue) //Text is another struct
-        //            .padding(/*@START_MENU_TOKEN@*/.all/*@END_MENU_TOKEN@*/) //View modifier
-            
-//        return RoundedRectangle(cornerRadius: 20)
-//            .stroke(lineWidth: 3)
-//            .padding(.horizontal)
-//            .foregroundColor(/*@START_MENU_TOKEN@*/.red/*@END_MENU_TOKEN@*/)
-            
-        return ZStack {
-            RoundedRectangle(cornerRadius: 20)
-                        .stroke(lineWidth: 3)
-            
-            Text("Hellooooo, wooooorld!")
-                        .foregroundColor(Color.blue) //Text is another struct
-                        .padding(/*@START_MENU_TOKEN@*/.all/*@END_MENU_TOKEN@*/) //View modifier
-//            I can also declare variabiles and us if statements
+        HStack {
+            CardView(content: emojis[0])
+            CardView(content: emojis[1])
+            CardView(content: emojis[2])
+            CardView(content: emojis[3])
         }
-//        Last argument can be outside the parethesis
         .padding(.horizontal)
-        .foregroundColor(/*@START_MENU_TOKEN@*/.red/*@END_MENU_TOKEN@*/) //default color for the views inside the container
+        .foregroundColor(.blue)
     }
     
-//    func foo() {
-//      structures can have functions
-//    }
+
 }
-
-
+// every view is immutable, every change is done by re-creating the UI
+struct CardView: View {
+    @State var isFaceUp: Bool = false// variables always have to have values
+//    @State makes the variabile a pointer to another variabile which changes,
+//    the pointer itself is immutalble, the view is re-built whenever it detects
+//    a change of the pointed variable
+    var content: String
+    var body: some View {
+        ZStack {
+            let shape = RoundedRectangle(cornerRadius: 20)
+            if isFaceUp {
+                shape.fill().foregroundColor(.white)
+                shape.stroke(lineWidth: 3) // racetrack
+                Text(content)
+                        .font(.largeTitle)
+                       .foregroundColor(Color.blue)
+                       .padding(/*@START_MENU_TOKEN@*/.all/*@END_MENU_TOKEN@*/)
+            } else {
+                shape.fill()
+            }
+        }
+        .onTapGesture {
+            isFaceUp = !isFaceUp
+        }
+    }
+}
 
 
 
@@ -86,6 +89,13 @@ struct ContentView: View { //View: the struct behaves like a view
 // glue code for the previewer
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView()
+        Group {
+            ContentView()
+                .preferredColorScheme(.dark)
+            
+            ContentView()
+                .preferredColorScheme(.light)
+        
+        }
     }
 }
